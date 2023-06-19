@@ -36,13 +36,14 @@ public class PersonController {
     public ResponseEntity<List<Person>> getPersons(
             @RequestParam(required = false) Optional<String> name,
             @RequestParam(required = false) Optional<String> email,
-            @RequestParam(required = false) Optional<Integer> age){
+            @RequestParam(required = false) Optional<Integer> age,
+            @RequestParam(required = false) Optional<Integer> height){
         System.out.println("...wywołano getPersons");
         List<Person> list;
         if (name.isEmpty() && email.isEmpty() && age.isEmpty())
             list = personService.getAllPersons();
         else
-            list = personService.getPersonsFilter(name, email, age);
+            list = personService.getPersonsFilter(name, email, age, height);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(list);

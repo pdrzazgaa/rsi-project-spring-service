@@ -20,11 +20,12 @@ public class PersonService{
         return personRepository.findAll();
     }
 
-    public List<Person> getPersonsFilter(Optional<String> name, Optional<String> email, Optional<Integer> age){
+    public List<Person> getPersonsFilter(Optional<String> name, Optional<String> email, Optional<Integer> age, Optional<Integer> height){
         return personRepository.findAll().stream()
+                .filter(p -> height.isEmpty() || p.getHeight() == height.get())
                 .filter(p -> age.isEmpty() || p.getAge() == age.get())
-                .filter(p -> email.isEmpty() || Objects.equals(p.getEmail(), email.get()))
-                .filter(p -> name.isEmpty() || Objects.equals(p.getName(), name.get()))
+                .filter(p -> email.isEmpty() || p.getEmail().toLowerCase().contains(email.get().toLowerCase()))
+                .filter(p -> name.isEmpty() || p.getName().toLowerCase().contains(name.get().toLowerCase()))
                 .collect(Collectors.toList());
     }
     public Person getPerson(int id) throws PersonNotFoundEx {
@@ -40,10 +41,11 @@ public class PersonService{
             if (p.getId() == personID){
                 if (person.getAge() > 0)
                     p.setAge(person.getAge());
-                if (person.getName() != null)
+                if (person.getName() != null && !person.getName().isEmpty() && !person.getName().isBlank())
                     p.setName(person.getName());
-                if (person.getEmail() != null)
+                if (person.getEmail() != null && !person.getEmail().isEmpty() && !person.getEmail().isBlank())
                     p.setEmail(person.getEmail());
+                personRepository.save(p);
                 return p;
             }
         }
